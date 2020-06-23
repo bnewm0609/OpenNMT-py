@@ -8,11 +8,17 @@ from onmt.models.sru import CheckSRU
 
 
 def config_opts(parser):
+    print("HI THERE EVERYBUGGY!")
     parser.add('-config', '--config', required=False,
                is_config_file_arg=True, help='config file path')
     parser.add('-save_config', '--save_config', required=False,
                is_write_out_config_file_arg=True,
                help='config file save path')
+    # not the cleanest place to put these args but the most apparent
+    parser.add('-disable_eos_sampling', '--disable_eos_sampling', action='store_true',
+            help='Prevent using eos at decode time') # for test time
+    parser.add('-use_eos', '--use_eos', action='store_false',
+            help='Use eos at train time') # for train time
 
 
 def model_opts(parser):

@@ -132,7 +132,8 @@ class Translator(object):
             report_align=False,
             report_score=True,
             logger=None,
-            seed=-1):
+            seed=-1,
+            des=False):
         self.model = model
         self.fields = fields
         tgt_field = dict(self.fields)["tgt"].base_field
@@ -201,6 +202,7 @@ class Translator(object):
                 "log_probs": []}
 
         set_random_seed(seed, self._use_cuda)
+        self.des = des
 
     @classmethod
     def from_opt(
@@ -263,7 +265,8 @@ class Translator(object):
             report_align=report_align,
             report_score=report_score,
             logger=logger,
-            seed=opt.seed)
+            seed=opt.seed,
+            des=opt.disable_eos_sampling)
 
     def _log(self, msg):
         if self.logger:
@@ -621,6 +624,8 @@ class Translator(object):
             log_probs = scores.squeeze(0).log()
             # returns [(batch_size x beam_size) , vocab ] when 1 step
             # or [ tgt_len, batch_size, vocab ] when full sentence
+        if self.des:
+            log_probs[..., self._tgt_eos_idx] = -float("inf")
         return log_probs, attn
 
     def _translate_batch_with_strategy(

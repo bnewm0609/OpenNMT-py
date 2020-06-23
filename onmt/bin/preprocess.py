@@ -280,6 +280,12 @@ def preprocess(opt):
     logger.info(" * number of target features: %d." % tgt_nfeats)
 
     logger.info("Building `Fields` object...")
+    if opt.disable_eos_sampling:
+        eos_token = "<blank>"
+        logger.info("Using NO eos token")
+    else:
+        eos_token = "</s>"
+        logger.info("Using standard eos token")
     fields = inputters.get_fields(
         opt.data_type,
         src_nfeats,
@@ -287,7 +293,8 @@ def preprocess(opt):
         dynamic_dict=opt.dynamic_dict,
         with_align=opt.train_align[0] is not None,
         src_truncate=opt.src_seq_length_trunc,
-        tgt_truncate=opt.tgt_seq_length_trunc)
+        tgt_truncate=opt.tgt_seq_length_trunc,
+        eos=eos_token)
 
     src_reader = inputters.str2reader[opt.data_type].from_opt(opt)
     tgt_reader = inputters.str2reader["text"].from_opt(opt)

@@ -36,6 +36,7 @@ def translate(opt):
 def _get_parser():
     parser = ArgumentParser(description='translate.py')
 
+    # import ipdb; ipdb.set_trace()
     opts.config_opts(parser)
     opts.translate_opts(parser)
     return parser
